@@ -25,9 +25,10 @@ test('Successful Contact Form Submission', async ({ page }) => {
   await page.getByRole('button', { name: 'Send Message' })
     .click();
 
-  // Wait for submission request to complete
+  // Wait for submission process
   await page.waitForTimeout(3000);
 });
+
 
 // TC-02: Empty Form Validation
 test('Empty Form Validation', async ({ page }) => {
@@ -53,3 +54,31 @@ test('Empty Form Validation', async ({ page }) => {
   ).toBeVisible();
 });
 
+
+// TC-03: Invalid Email Format Validation
+test('Invalid Email Format Validation', async ({ page }) => {
+
+  await page.goto(
+    'https://safora.se/en/contact.html',
+    { waitUntil: 'domcontentloaded' }
+  );
+
+  await page.getByRole('textbox', { name: 'Your Name' })
+    .fill('Dewmi Dilsara');
+
+  await page.getByRole('textbox', { name: 'Email Address' })
+    .fill('dewmidilsaara125');
+
+  await page.getByRole('textbox', { name: 'Phone Number' })
+    .fill('+94728711221');
+
+  await page.getByRole('textbox', { name: 'Your Message' })
+    .fill('Testing invalid email address');
+
+  await page.getByRole('button', { name: 'Send Message' })
+    .click();
+
+  await expect(
+    page.getByText('Please enter a valid email address.')
+  ).toBeVisible();
+});
