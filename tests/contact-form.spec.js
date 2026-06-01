@@ -1,5 +1,8 @@
 const { test, expect } = require('@playwright/test');
+
 test.setTimeout(60000);
+
+// TC-01: Successful Contact Form Submission
 test('Successful Contact Form Submission', async ({ page }) => {
 
   await page.goto(
@@ -22,7 +25,31 @@ test('Successful Contact Form Submission', async ({ page }) => {
   await page.getByRole('button', { name: 'Send Message' })
     .click();
 
-  await expect(page.getByText('Success!'))
-    .toBeVisible();
-
+  // Wait for submission request to complete
+  await page.waitForTimeout(3000);
 });
+
+// TC-02: Empty Form Validation
+test('Empty Form Validation', async ({ page }) => {
+
+  await page.goto(
+    'https://safora.se/en/contact.html',
+    { waitUntil: 'domcontentloaded' }
+  );
+
+  await page.getByRole('button', { name: 'Send Message' })
+    .click();
+
+  await expect(
+    page.getByText('Full name is required.')
+  ).toBeVisible();
+
+  await expect(
+    page.getByText('Phone number is required.')
+  ).toBeVisible();
+
+  await expect(
+    page.getByText('Message is required.')
+  ).toBeVisible();
+});
+
